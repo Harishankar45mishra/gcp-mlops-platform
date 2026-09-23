@@ -96,3 +96,22 @@ Pro:
 gra:
 	@echo "Grafana: http://$$(kubectl get svc monitoring-grafana -n monitoring -o jsonpath='{.status.loadBalancer.ingress[0].ip}')"
 >>>>>>> 3484c33 (completed)
+
+
+############################################
+# ArgoCD
+############################################
+
+.PHONY: argocd-port-forward argocd-password argocd-login
+
+argocd-port-forward:
+	kubectl port-forward svc/argocd-server -n argocd 8080:443
+
+argocd-password:
+	kubectl -n argocd get secret argocd-initial-admin-secret \
+	-o jsonpath="{.data.password}" | base64 -d && echo
+
+argocd-login:
+	@echo "URL: https://localhost:8080"
+	@echo "Username: admin"
+	@echo "Run 'make argocd-password' to get the password."
