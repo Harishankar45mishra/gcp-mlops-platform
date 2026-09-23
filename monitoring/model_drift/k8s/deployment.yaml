@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: model-drift
+  namespace: ml-api
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: model-drift
+
+  template:
+    metadata:
+      labels:
+        app: model-drift
+
+    spec:
+      containers:
+        - name: model-drift
+
+          image: us-central1-docker.pkg.dev/project-cd87c2b0-43f1-4451-809/mlops/model-drift:latest
+
+          imagePullPolicy: Always
+
+          ports:
+            - containerPort: 8001
+
+          volumeMounts:
+            - name: prediction-logs
+              mountPath: /app/logs
+
+      volumes:
+        - name: prediction-logs
+          emptyDir: {}

@@ -1,0 +1,23 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+
+metadata:
+  name: iris-api
+  namespace: monitoring
+  labels:
+    release: monitoring
+
+spec:
+  selector:
+    matchLabels:
+      app: iris-api
+      release: monitoring
+
+  namespaceSelector:
+    matchNames:
+      - ml-api
+
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s

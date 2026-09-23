@@ -1,0 +1,17 @@
+groups:
+- name: mlops
+
+  rules:
+
+  - alert: PredictionDriftDetected
+
+    expr: model_prediction_drift == 1
+
+    for: 5m
+
+    labels:
+      severity: critical
+
+    annotations:
+      summary: Prediction Drift
+      description: Model predictions are drifting.

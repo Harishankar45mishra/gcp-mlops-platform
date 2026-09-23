@@ -8,3 +8,24 @@ wheels/
 
 # Virtual environments
 .venv
+
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# MLflow local
+mlflow.db
+mlflow-data/
+mlartifacts/
+
+# Models generated locally
+models/*.pkl
+
+# IDE
+.vscode/
+.idea/
+
+# macOS
+.DS_Store

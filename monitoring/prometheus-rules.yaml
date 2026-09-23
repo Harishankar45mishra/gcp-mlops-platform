@@ -1,0 +1,27 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+
+metadata:
+  name: iris-api-rules
+  namespace: monitoring
+
+spec:
+  groups:
+
+  - name: iris.rules
+
+    rules:
+
+    - alert: IrisAPIDown
+
+      expr: up{job="iris-api"} == 0
+
+      for: 1m
+
+      labels:
+        severity: critical
+
+      annotations:
+        summary: Iris API Down
+
+        description: Iris API has not responded for more than one minute.

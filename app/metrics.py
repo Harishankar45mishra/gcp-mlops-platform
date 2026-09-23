@@ -1,0 +1,74 @@
+from prometheus_client import Counter, Gauge, Histogram
+
+REQUEST_COUNT = Counter(
+    "http_requests_total",
+    "Total HTTP requests",
+    ["method", "endpoint", "status"],
+)
+
+REQUEST_LATENCY = Histogram(
+    "http_request_duration_seconds",
+    "HTTP request latency",
+)
+
+ACTIVE_REQUESTS = Gauge(
+    "http_requests_active",
+    "Active requests",
+)
+
+prediction_requests = Counter(
+    "prediction_requests_total",
+    "Total prediction requests",
+)
+
+prediction_failures = Counter(
+    "prediction_failures_total",
+    "Total prediction failures",
+)
+
+prediction_latency = Histogram(
+    "prediction_latency_seconds",
+    "Prediction latency in seconds",
+)
+
+
+MODEL_LOADS = Counter(
+    "model_load_total",
+    "Total model load attempts",
+)
+
+MODEL_LOAD_FAILURES = Counter(
+    "model_load_failures_total",
+    "Total failed model loads",
+)
+
+MODEL_LOAD_DURATION = Histogram(
+    "model_load_duration_seconds",
+    "Time taken to load the model",
+)
+
+MODEL_VERSION = Gauge(
+    "loaded_model_version",
+    "Currently loaded model version",
+)
+
+MODEL_INFO = Gauge(
+    "loaded_model_info",
+    "Loaded model information",
+    ["model_name"],
+)
+
+feature_store_requests = Counter(
+    "feature_store_requests_total",
+    "Total Feature Store requests",
+)
+
+feature_store_failures = Counter(
+    "feature_store_failures_total",
+    "Total Feature Store failures",
+)
+
+feature_store_latency = Histogram(
+    "feature_store_latency_seconds",
+    "Feature Store latency",
+)

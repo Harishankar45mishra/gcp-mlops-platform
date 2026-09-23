@@ -1,9 +1,22 @@
-import os
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
-MLFLOW_TRACKING_URI = os.getenv(
-    "MLFLOW_TRACKING_URI",
-    "http://127.0.0.1:5000",
-)
 
-MODEL_NAME = os.getenv("MODEL_NAME", "IrisClassifier")
-MODEL_VERSION = os.getenv("MODEL_VERSION", "1")
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        extra="ignore",
+    )
+
+    app_name: str = "iris-api"
+    app_version: str = "1.0.0"
+
+    log_level: str = "INFO"
+
+    metrics_enabled: bool = True
+
+    mlflow_tracking_uri: str
+    model_name: str
+    model_version: str
+
+
+settings = Settings()

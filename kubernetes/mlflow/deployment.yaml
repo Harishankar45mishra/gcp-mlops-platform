@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mlflow
+  namespace: mlflow
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: mlflow
+
+  template:
+    metadata:
+      labels:
+        app: mlflow
+
+    spec:
+      serviceAccountName: mlflow-sa
+
+      volumes:
+        - name: secrets-store
+          csi:
+            driver: secrets-store-gke.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: mlflow-secrets
+
+      containers:
+        - name: mlflow
+
+          image: us-central1-docker.pkg.dev/project-cd87c2b0-43f1-4451-809/mlops-repo/mlflow:v2
+
+          ports:
+            - containerPort: 5000
+
+          volumeMounts:
+            - name: secrets-store
+              mountPath: /mnt/secrets
+              readOnly: true
+
+          command:
+            - /bin/sh
+            - -c
+
+          args:
+            - |
+              export DB_USER=$(cat /mnt/secrets/db-user)
+              export DB_PASSWORD=$(cat /mnt/secrets/db-password)
+              export DB_NAME=$(cat /mnt/secrets/db-name)
+
+              export BACKEND_STORE_URI="postgresql://${DB_USER}:${DB_PASSWORD}@127.0.0.1:5432/${DB_NAME}"
+
+              mlflow server \
+                --host 0.0.0.0 \
+                --port 5000 \
+                --allowed-hosts "*" \
+                --cors-allowed-origins "*" \
+                --backend-store-uri "$BACKEND_STORE_URI" \
+                --default-artifact-root gs://mlops-platform-artifacts-dev
+
+        - name: cloud-sql-proxy
+          image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.18.2
+          args:
+            - "--private-ip=false"
+            - "--structured-logs"
+            - "--port=5432"
+            - "project-cd87c2b0-43f1-4451-809:us-central1:mlflow"

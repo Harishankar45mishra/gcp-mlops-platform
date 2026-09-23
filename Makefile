@@ -1,8 +1,14 @@
 SHELL := /bin/bash
 
+<<<<<<< HEAD
 # ============================================================================
 # Project Configuration
 # ============================================================================
+=======
+# ==============================================================================
+# Project Configuration
+# ==============================================================================
+>>>>>>> 3484c33 (completed)
 
 PROJECT_ID := project-cd87c2b0-43f1-4451-809
 DB_HOST := 127.0.0.1
@@ -12,12 +18,25 @@ DB_USER := mlflow
 DB_SECRET_NAME := mlflow-db-password
 ARTIFACT_ROOT := gs://mlops-platform-artifacts-dev
 
+<<<<<<< HEAD
 # ============================================================================
 # Targets
 # ============================================================================
 
 .PHONY: install sync train run test lint format clean \
 	proxy mlflow-db mlflow mlflow-version
+=======
+# ==============================================================================
+# Targets
+# ==============================================================================
+
+
+PROM_PORT ?= 9090
+GRAFANA_PORT ?= 3000
+
+.PHONY: install sync train run test lint format clean \
+        proxy mlflow-db mlflow mlflow-v Pro gra
+>>>>>>> 3484c33 (completed)
 
 install:
 	uv sync
@@ -64,5 +83,16 @@ mlflow:
 		--allowed-hosts "*" \
 		--cors-allowed-origins "*"
 
+<<<<<<< HEAD
 mlflow-version:
 	uv run mlflow --version
+=======
+mlflow-v:
+	uv run mlflow --version
+
+Pro:
+	@echo "Prometheus: http://$$(kubectl get svc monitoring-kube-prometheus-prometheus -n monitoring -o jsonpath='{.status.loadBalancer.ingress[0].ip}'):9090"
+
+gra:
+	@echo "Grafana: http://$$(kubectl get svc monitoring-grafana -n monitoring -o jsonpath='{.status.loadBalancer.ingress[0].ip}')"
+>>>>>>> 3484c33 (completed)

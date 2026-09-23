@@ -5,18 +5,25 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "fastapi>=0.141.1",
-    "google-cloud-storage>=3.14.1",
-    "joblib>=1.6.0",
+    "fastapi>=0.116.1",
+    "uvicorn[standard]>=0.35.0",
     "mlflow>=3.16.0",
-    "numpy>=2.5.3",
-    "pandas>=3.0.5",
-    "prometheus-client>=0.26.0",
-    "python-dotenv>=1.2.3",
-    "scikit-learn>=1.9.1",
-    "uvicorn>=0.52.4",
+    "pandas>=2.3.2",
+    "numpy>=2.3.3",
+    "scikit-learn>=1.7.2",
+    "pydantic>=2.11.9",
+    "pydantic-settings>=2.10.1",
+    "prometheus-client>=0.23.1",
+    "google-cloud-storage>=3.4.1",
+    "google-cloud-secret-manager>=2.24.0",
+    "psycopg2-binary>=2.9.10",
+    "python-dotenv>=1.1.1",
+    "structlog>=26.1.0",
+    "evidently>=0.7.23",
+    "shap>=0.52.0",
+    "feast>=0.66.0",
+    "pyarrow>=25.0.1",
 ]
-
 [project.scripts]
 gcp-mlops-platform = "gcp_mlops_platform:main"
 

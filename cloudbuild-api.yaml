@@ -1,0 +1,12 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+    - 'build'
+    - '-f'
+    - 'Dockerfile.api'
+    - '-t'
+    - 'us-central1-docker.pkg.dev/project-cd87c2b0-43f1-4451-809/mlops-repo/api:v2'
+    - '.'
+
+images:
+- 'us-central1-docker.pkg.dev/project-cd87c2b0-43f1-4451-809/mlops-repo/api:v2'

@@ -1,0 +1,5 @@
+evidently
+pandas
+numpy
+prometheus-client
+google-cloud-storage

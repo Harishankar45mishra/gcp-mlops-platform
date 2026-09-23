@@ -1,23 +1,45 @@
-import mlflow.pyfunc
+import time
 
-from app.config import (
-    MLFLOW_TRACKING_URI,
-    MODEL_NAME,
-    MODEL_VERSION,
+import pandas as pd
+import structlog
+
+import json
+from pathlib import Path
+from datetime import datetime
+from app.services.storage import save_prediction
+logger = structlog.get_logger()
+from app.metrics import (
+    PREDICTION_COUNTER,
+    PREDICTION_LATENCY,
 )
-
+from app.model import loader
 
 class Predictor:
+    def predict(self, request: dict):
+        start = time.time()
 
-    def __init__(self):
-        mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
+        logger.info("prediction_started")
 
-        self.model = mlflow.pyfunc.load_model(
-            model_uri=f"models:/{MODEL_NAME}/{MODEL_VERSION}"
+        model = loader.load()
+
+        df = pd.DataFrame([request])
+
+        prediction = model.predict(df)
+
+        PREDICTION_COUNTER.inc()
+        PREDICTION_LATENCY.observe(time.time() - start)
+
+        record = {
+            "features": dict(request),
+            "prediction": int(prediction[0]),
+        }
+
+        save_prediction(record)
+
+        logger.info(
+            "prediction_completed",
+            prediction=prediction.tolist(),
+            latency=time.time() - start,
         )
 
-    def predict(self, features: list[float]):
-
-        prediction = self.model.predict([features])
-
-        return int(prediction[0])
+        return prediction.tolist()
