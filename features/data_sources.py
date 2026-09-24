@@ -1,6 +1,6 @@
 from feast import FileSource
 
-iris_source = FileSource(
-    path="data/iris.parquet",
+default_source = FileSource(
+    path="data/default.parquet",
     timestamp_field="event_timestamp",
 )

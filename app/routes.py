@@ -1,19 +1,43 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
+import mlflow.pyfunc
 
-from app.predictor import Predictor
-from app.schemas import IrisRequest, PredictionResponse
+from app.schemas import PredictionRequest, PredictionResponse
+from app.config import settings
 
 router = APIRouter()
 
-predictor = Predictor()
+_model = None
 
 
-@router.post(
-    "/predict",
-    response_model=PredictionResponse,
-)
-def predict(request: IrisRequest):
+def get_model():
+    global _model
 
-    prediction = predictor.predict(request.model_dump())
+    if _model is None:
+        try:
+            _model = mlflow.pyfunc.load_model(settings.model_uri)
+        except Exception as e:
+            raise RuntimeError(f"Unable to load model: {e}")
 
-    return PredictionResponse(prediction=prediction[0])
+    return _model
+
+
+@router.post("/predict", response_model=PredictionResponse)
+def predict(request: PredictionRequest):
+
+    model = get_model()
+
+    try:
+        prediction = model.predict([request.features])[0]
+
+        return PredictionResponse(
+            prediction=prediction,
+            model_name=settings.model_name,
+            model_version=None,
+            confidence=None,
+        )
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=str(e),
+        )

@@ -1,9 +1,13 @@
 from pydantic import BaseModel
+from typing import Any, Dict
 
 
 class PredictionRequest(BaseModel):
-    iris_id: int
+    features: Dict[str, Any]
 
 
 class PredictionResponse(BaseModel):
-    prediction: int
+    prediction: Any
+    model_name: str
+    model_version: str | None = None
+    confidence: float | None = None

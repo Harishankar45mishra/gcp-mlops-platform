@@ -1,0 +1,83 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+
+metadata:
+  name: ml-api-rules
+  namespace: monitoring
+
+spec:
+  groups:
+    - name: ml-api
+
+      rules:
+        - alert: MLAPIDown
+          expr: up{job="ml-api"} == 0
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: ML API Down
+            description: ML API is unreachable.
+
+        - alert: HighMemoryUsage
+          expr: process_resident_memory_bytes{job="ml-api"} > 500000000
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: High memory usage
+            description: ML API is using more than 500 MB memory.
+
+        - alert: HighCPUUsage
+          expr: rate(process_cpu_seconds_total{job="ml-api"}[5m]) > 0.8
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: High CPU usage
+            description: CPU usage is above 80%.
+
+        - alert: HighRequestRate
+          expr: rate(http_requests_total{job="ml-api"}[1m]) > 100
+          for: 2m
+          labels:
+            severity: warning
+          annotations:
+            summary: High request rate
+            description: Request rate is above 100 requests/sec.
+
+        - alert: HighErrorRate
+          expr: |
+            (
+              sum(rate(http_requests_total{job="ml-api",status=~"5.."}[5m]))
+              /
+              sum(rate(http_requests_total{job="ml-api"}[5m]))
+            ) > 0.05
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: High 5xx error rate
+            description: Error rate is above 5%.
+
+        - alert: HighLatency
+          expr: |
+            histogram_quantile(
+              0.95,
+              sum(rate(http_request_duration_seconds_bucket{job="ml-api"}[5m])) by (le)
+            ) > 1
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: High API latency
+            description: 95th percentile latency exceeds 1 second.
+
+        - alert: PodNotReady
+          expr: kube_pod_status_ready{condition="true",namespace="ml-api"} == 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: Pod not Ready
+            description: One or more ML API pods are not Ready.

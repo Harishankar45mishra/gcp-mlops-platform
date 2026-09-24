@@ -1,12 +1,20 @@
+substitutions:
+  _PROJECT_ID: your-project-id
+  _REGION: us-central1
+  _REPOSITORY: mlops-repo
+  _IMAGE_NAME: api
+  _IMAGE_TAG: latest
+  _DOCKERFILE: Dockerfile.api
+
 steps:
-- name: 'gcr.io/cloud-builders/docker'
-  args:
-    - 'build'
-    - '-f'
-    - 'Dockerfile.api'
-    - '-t'
-    - 'us-central1-docker.pkg.dev/project-cd87c2b0-43f1-4451-809/mlops-repo/api:v2'
-    - '.'
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - -f
+      - ${_DOCKERFILE}
+      - -t
+      - ${_REGION}-docker.pkg.dev/${_PROJECT_ID}/${_REPOSITORY}/${_IMAGE_NAME}:${_IMAGE_TAG}
+      - .
 
 images:
-- 'us-central1-docker.pkg.dev/project-cd87c2b0-43f1-4451-809/mlops-repo/api:v2'
+  - ${_REGION}-docker.pkg.dev/${_PROJECT_ID}/${_REPOSITORY}/${_IMAGE_NAME}:${_IMAGE_TAG}

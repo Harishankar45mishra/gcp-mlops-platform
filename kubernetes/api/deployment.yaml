@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 
 metadata:
-  name: iris-api
+  name: ml-api
   namespace: ml-api
 
 spec:
@@ -10,25 +10,26 @@ spec:
 
   selector:
     matchLabels:
-      app: iris-api
+      app: ml-api
 
   template:
     metadata:
       labels:
-        app: iris-api
+        app: ml-api
 
     spec:
-      serviceAccountName: iris-api
+      serviceAccountName: ml-api
+
       containers:
+        - name: api
 
-      - name: api
+          image: ${REGION}-docker.pkg.dev/${PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/api:${IMAGE_TAG}
 
-        image: us-central1-docker.pkg.dev/project-cd87c2b0-43f1-4451-809/mlops-repo/api:v2
+          imagePullPolicy: Always
 
-        ports:
-        - containerPort: 8000
+          ports:
+            - containerPort: 8000
 
-        env:
-
-        - name: MLFLOW_TRACKING_URI
-          value: "http://mlflow.mlflow.svc.cluster.local:5000"
+          env:
+            - name: MLFLOW_TRACKING_URI
+              value: "http://mlflow.mlflow.svc.cluster.local:5000"

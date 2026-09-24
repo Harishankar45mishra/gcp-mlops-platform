@@ -1,5 +1,6 @@
 apiVersion: apps/v1
 kind: Deployment
+
 metadata:
   name: mlflow
   namespace: mlflow
@@ -30,7 +31,9 @@ spec:
       containers:
         - name: mlflow
 
-          image: us-central1-docker.pkg.dev/project-cd87c2b0-43f1-4451-809/mlops-repo/mlflow:v2
+          image: ${REGION}-docker.pkg.dev/${PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/mlflow:${IMAGE_TAG}
+
+          imagePullPolicy: Always
 
           ports:
             - containerPort: 5000
@@ -58,7 +61,7 @@ spec:
                 --allowed-hosts "*" \
                 --cors-allowed-origins "*" \
                 --backend-store-uri "$BACKEND_STORE_URI" \
-                --default-artifact-root gs://mlops-platform-artifacts-dev
+                --default-artifact-root ${ARTIFACT_ROOT}
 
         - name: cloud-sql-proxy
           image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.18.2
@@ -66,4 +69,4 @@ spec:
             - "--private-ip=false"
             - "--structured-logs"
             - "--port=5432"
-            - "project-cd87c2b0-43f1-4451-809:us-central1:mlflow"
+            - "${PROJECT_ID}:${REGION}:${CLOUD_SQL_INSTANCE}"

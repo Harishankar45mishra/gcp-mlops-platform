@@ -1,8 +1,0 @@
-import pandas as pd
-
-df = pd.read_csv("feature_store/data/iris.csv")
-
-df.to_parquet(
-    "feature_store/data/iris.parquet",
-    index=False,
-)

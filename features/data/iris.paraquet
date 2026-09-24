@@ -1,0 +1,8 @@
+import pandas as pd
+
+pd.read_csv("features/data/default.csv")
+
+df.to_parquet(
+    "features/data/default.parquet"
+    index=False,
+)

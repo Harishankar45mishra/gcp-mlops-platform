@@ -2,19 +2,19 @@ apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 
 metadata:
-  name: iris-api-rules
+  name: ml-api-rules
   namespace: monitoring
 
 spec:
   groups:
 
-  - name: iris.rules
+  - name: ml-platform.rules
 
     rules:
 
-    - alert: IrisAPIDown
+    - alert: MLAPIDown
 
-      expr: up{job="iris-api"} == 0
+      expr: up{job="ml-api"} == 0
 
       for: 1m
 
@@ -22,6 +22,6 @@ spec:
         severity: critical
 
       annotations:
-        summary: Iris API Down
+        summary: ML API Down
 
-        description: Iris API has not responded for more than one minute.
+        description: ML API has not responded for more than one minute.
